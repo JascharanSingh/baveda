@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { IKUpload } from "imagekitio-react";
 
 export default function Admin() {
   const [formData, setFormData] = useState({
@@ -17,17 +18,6 @@ export default function Admin() {
     image: null as string | null,
     agree: false,
   });
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => ({ ...prev, image: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleSubmit = () => {
     const {
@@ -63,7 +53,7 @@ export default function Admin() {
       productName,
       volume,
       sellingPrice,
-      image,
+      image, 
     };
 
     const existing = JSON.parse(localStorage.getItem("items") || "[]");
@@ -107,7 +97,6 @@ export default function Admin() {
           onChange={(e) => setFormData({ ...formData, volume: e.target.value })}
           className="border p-2 rounded"
         />
-
         <input
           type="text"
           placeholder="Selling Price (e.g. $54.99)"
@@ -122,7 +111,6 @@ export default function Admin() {
           onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
           className="border p-2 rounded"
         />
-
         <input
           type="text"
           placeholder="Category (e.g. Vodka)"
@@ -142,22 +130,36 @@ export default function Admin() {
 
       <div className="mt-4">
         <label className="block font-semibold mb-2">Upload Image</label>
-        <input type="file" accept="image/*" onChange={handleImageUpload} />
+
+        <IKUpload
+          fileName="liquor-product.jpg"
+          folder="/liquor-products"
+          onSuccess={(res) => {
+            console.log("ImageKit upload success:", res);
+            setFormData((prev) => ({
+              ...prev,
+              image: res.url,
+            }));
+          }}
+          onError={(err) => {
+            console.error("ImageKit upload error:", err);
+            alert("Image upload failed. Please try again.");
+          }}
+        />
+
         {formData.image && (
           <img src={formData.image} alt="Preview" className="mt-3 w-40 h-auto rounded shadow" />
         )}
       </div>
 
-      <div className="flex items-center mt-4">
+      <div className="mt-4 flex items-center">
         <input
           type="checkbox"
           checked={formData.agree}
           onChange={(e) => setFormData({ ...formData, agree: e.target.checked })}
           className="mr-2"
         />
-        <label className="text-sm text-gray-600">
-          Clothing takes 30% from your total sale
-        </label>
+        <label>I agree to the 30% sales share.</label>
       </div>
 
       <button

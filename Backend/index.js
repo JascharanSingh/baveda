@@ -1,41 +1,33 @@
-const express = require('express');
-const cors = require('cors');//catcher which catch request from frontend
-const dotenv = require('dotenv');
-const connectDB = require('./config/db');
+const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
+require("dotenv").config();
 
-// Load env variables
-dotenv.config();
-
-// Connect to DB
-connectDB();
+// Import route modules
+const productRoutes = require("./routes/productRoutes");
+const imagekitRoutes = require("./routes/imagekit");
 
 const app = express();
-app.use(cors());
+
+// Middleware
+app.use(cors({
+  origin: "*"
+}));
+
 app.use(express.json());
 
+// MongoDB connection
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ Mongo Error:", err));
 
+// API Routes
+app.use("/api/products", productRoutes);
+app.use("/api/imagekit", imagekitRoutes);
 
-
-
-// Test route
-app.get('/', (req, res) => res.send('API Running'));
-
-
-app.use('/api/products', require('./routes/productRoutes'));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Start server
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});

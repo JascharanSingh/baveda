@@ -14,10 +14,7 @@ exports.getAllProducts = async (req, res) => {
 // CREATE product
 exports.createProduct = async (req, res) => {
   try {
-    console.log("📥 Creating Product:", req.body); // ✅ Full payload log
-    console.log("✅ Volume:", req.body.volume);
-    console.log("✅ Brand:", req.body.brand);
-
+    console.log("📥 Creating Product:", req.body);
     const newProduct = new Product({
       name: req.body.name,
       price: req.body.price,
@@ -28,6 +25,9 @@ exports.createProduct = async (req, res) => {
       onSale: req.body.onSale,
       brand: req.body.brand,
       volume: req.body.volume,
+      bestSeller: req.body.bestSeller || false,
+      trending: req.body.trending || false,
+      newArrival: req.body.newArrival || false,
     });
 
     await newProduct.save();
@@ -51,8 +51,11 @@ exports.updateProduct = async (req, res) => {
         category: req.body.category,
         subcategory: req.body.subcategory,
         onSale: req.body.onSale,
-        brand: req.body.brand, // ✅ include brand
-        volume: req.body.volume, // ✅ include volume
+        brand: req.body.brand,
+        volume: req.body.volume,
+        bestSeller: req.body.bestSeller || false,
+        trending: req.body.trending || false,
+        newArrival: req.body.newArrival || false,
       },
       { new: true }
     );

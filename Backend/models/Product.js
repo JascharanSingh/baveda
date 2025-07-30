@@ -15,7 +15,10 @@ const ProductSchema = new mongoose.Schema({
   origin: String,
   brand: String,
   image: String,
-  onSale: Boolean,
+  onSale: { type: Boolean, default: false },
+  bestSeller: { type: Boolean, default: false },   // ✅ New
+  trending: { type: Boolean, default: false },     // ✅ New
+  newArrival: { type: Boolean, default: false },   // ✅ New
 });
 
 module.exports = mongoose.model('Product', ProductSchema);
